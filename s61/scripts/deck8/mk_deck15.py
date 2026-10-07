@@ -77,8 +77,9 @@ el = copy.deepcopy(shp(s18, 7)._element); s19.shapes._spTree.append(el)
 bs = [sh for sh in s19.shapes if sh.has_text_frame and sh.text_frame.text.startswith('근거')][0]; set_text_keep(bs, '근거  2.4.5, 3.1, 3.2.1, 3.2.3')
 # 내용(타임라인) 전체를 ▶ 아래(1.35in)로 올림 — 지금 1.57in부터
 dy = int(1.35 * IN) - shp(s19, 8).top
+keep = {lab.shape_id, hd.shape_id, bs.shape_id, 2, 4, 5}
 for sh in s19.shapes:
-    if sh.shape_id in (2, 4, 5) or sh is lab or sh is hd or sh is bs: continue
+    if sh.shape_id in keep: continue
     move(sh, dy)
 set_notes(19, """모델은 한 번에 설계되지 않았습니다. 일곱 단계로 다듬었습니다.
 2025년 9월에 두 표준 연계의 목적과 범위를 정리하였고, 10월에 ISO 14001 전 조항 검토표와 연계표, 성숙도표를 만들었습니다.
