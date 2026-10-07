@@ -5,7 +5,7 @@ rules = json.load(open(sys.argv[2], encoding='utf8'))
 prs = Presentation(sys.argv[1])
 items = []  # (where, text)
 for i, s in enumerate(prs.slides, 1):
-    kind = '본' if i <= 29 else '백업'
+    kind = '본' if i <= 30 else '백업'
     for sh in s.shapes:
         if sh.has_text_frame and sh.text_frame.text.strip():
             items.append((f'{kind}{i} 화면[{sh.name}]', sh.text_frame.text))
