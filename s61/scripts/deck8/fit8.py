@@ -85,8 +85,22 @@ for i, s in enumerate(prs.slides, 1):
     sz = runs[0].font.size.pt
     if sz != 27: continue
     if label:
-        for p in label.text_frame.paragraphs: p.alignment = PP_ALIGN.RIGHT
-        lab_w = em(label.text_frame.text) * 12 * 12700 + 2 * 91440
+        # 장 표시를 눈에 띄게: 14pt 굵게 남색, 연한 남색 바탕 상자 (이사님 10/7: 「목차 제목이 슬라이드에서 구분이 안 된다」)
+        from pptx.dml.color import RGBColor
+        is_backup = label.text_frame.text.startswith('백업')
+        for p in label.text_frame.paragraphs:
+            p.alignment = PP_ALIGN.RIGHT
+            for r in p.runs:
+                r.font.size = Pt(14 if not is_backup else 12); r.font.bold = not is_backup
+                r.font.color.rgb = RGBColor(0x1F, 0x38, 0x64) if not is_backup else RGBColor(0x7F, 0x7F, 0x7F)
+        if not is_backup:
+            label.fill.solid(); label.fill.fore_color.rgb = RGBColor(0xE8, 0xEE, 0xF7)
+            label.text_frame.word_wrap = False
+            from pptx.enum.text import MSO_AUTO_SIZE, MSO_ANCHOR
+            label.text_frame.auto_size = MSO_AUTO_SIZE.NONE; label.text_frame.vertical_anchor = MSO_ANCHOR.MIDDLE
+            lw = int(em(label.text_frame.text) * 14 * 1.1 * 12700 + 2 * 91440 + 120000)
+            right = label.left + label.width; label.width = Emu(lw); label.left = Emu(right - lw); label.height = Emu(330000); label.top = Emu(190000)
+        lab_w = em(label.text_frame.text) * (14 if not is_backup else 12) * 1.1 * 12700 + 2 * 91440 + 120000
         avail = (label.left + label.width - lab_w) - title.left - 2 * 91440 - 91440
     else:
         avail = title.width - 2 * 91440
@@ -96,6 +110,7 @@ for i, s in enumerate(prs.slides, 1):
         new = max(20, math.floor(avail / (em(t) * 1.06 * 12700)))
         for r in runs: r.font.size = Pt(new)
         LOG.append((i, '제목 글꼴', f'{sz:.0f}pt', f'{new}pt (한 줄에 맞춤)', t))
+    if label and not label.text_frame.text.startswith('백업') and i == 4: LOG.append(('4~28', '장 표시(오른쪽 위)', '12pt 회색', '14pt 굵게 남색 + 연한 바탕 상자', '목차의 Ⅰ~Ⅴ·맺음과 이어지게'))
 
 # ---------- (b) 표 행 높이 ----------
 from PIL import ImageFont
