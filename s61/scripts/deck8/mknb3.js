@@ -7,7 +7,7 @@ const data=JSON.parse(fs.readFileSync(dataPath,'utf8')); const CH=JSON.parse(fs.
 const t=(s,o={})=>new TextRun({text:String(s),font:F,size:o.size||28,bold:o.bold,color:o.color});
 const P=(s,o={})=>new Paragraph({children:Array.isArray(s)?s:[t(s,o)],spacing:{after:o.after??120,line:o.line||300,before:o.before||0},alignment:o.align});
 const fmt=s=>s==null?'—':(s>=60?`${Math.floor(s/60)}분${s%60?' '+s%60+'초':''}`:`${s}초`);
-const last=data.filter(x=>x.n<=30).slice(-1)[0]; const TOTAL=fmt(last.cum);
+const last=data.filter(x=>x.img).slice(-1)[0]; const TOTAL=fmt(last.cum);
 const bd={style:BorderStyle.SINGLE,size:4,color:'A6B0C3'};const borders={top:bd,bottom:bd,left:bd,right:bd};const none={style:BorderStyle.NONE};
 const cell=(children,w,fill)=>new TableCell({borders,width:{size:w,type:WidthType.DXA},shading:fill?{type:ShadingType.CLEAR,fill,color:'auto'}:undefined,margins:{top:50,bottom:50,left:90,right:90},children});
 const box1=(title,paras,fill)=>new Table({width:{size:10600,type:WidthType.DXA},columnWidths:[10600],rows:[new TableRow({children:[cell([P(title,{size:17,bold:true,color:'1F3864',after:30}),...paras],10600,fill)]})]});
@@ -20,10 +20,10 @@ kids.push(P(TITLE,{size:40,bold:true,after:200}));
 kids.push(P(SUB,{size:20,color:'595959',after:160}));
 kids.push(P('쓰는 법 — 한 쪽이 슬라이드 하나. 큰 글자가 읽는 대본, 회색 글이 지시문(읽지 않음). 「용어」는 논문 부록 K 용어집 문장 그대로(한글·영문·뜻·출처). 「참고」는 대본에 나온 숫자·표·그림이 논문 어디(절·표·그림 번호)에 있고 무엇인지, 그리고 뒤 몇 쪽에서 자세히 다루는지. 「물으면」은 논문 위치 → 답 요지 → 전문 번호·띄울 백업 번호. 뒤 장에서 다루는 질문이 오면 「n번 장에서 말씀드리겠습니다」 하고 넘어간다. 백업 색인과 장별·번호별 예상 질문 전문은 맨 뒤.',{size:19,after:200,line:280}));
 const rows=[new TableRow({tableHeader:true,children:['장','제목','목표','누적'].map((h,i)=>new TableCell({borders,width:{size:[700,7500,1200,1200][i],type:WidthType.DXA},shading:{type:ShadingType.CLEAR,fill:'1F3864',color:'auto'},children:[P(h,{size:18,bold:true,color:'FFFFFF',after:0})]}))})];
-for(const d of data.filter(x=>x.n<=30)) rows.push(new TableRow({children:[[d.n,700],[d.title,7500],[fmt(d.secs),1200],[fmt(d.cum),1200]].map(([v,w])=>new TableCell({borders,width:{size:w,type:WidthType.DXA},margins:{top:20,bottom:20,left:60,right:60},children:[P(v,{size:17,after:0})]}))}));
+for(const d of data.filter(x=>x.img)) rows.push(new TableRow({children:[[d.n,700],[d.title,7500],[fmt(d.secs),1200],[fmt(d.cum),1200]].map(([v,w])=>new TableCell({borders,width:{size:w,type:WidthType.DXA},margins:{top:20,bottom:20,left:60,right:60},children:[P(v,{size:17,after:0})]}))}));
 kids.push(new Table({width:{size:10600,type:WidthType.DXA},columnWidths:[700,7500,1200,1200],rows}));
 kids.push(new Paragraph({children:[new PageBreak()]}));
-for(const d of data.filter(x=>x.n<=30)){
+for(const d of data.filter(x=>x.img)){
   const c=CH.cheat[String(d.n)]||{terms:[],qs:[],ref:[]};
   kids.push(new Table({width:{size:10600,type:WidthType.DXA},columnWidths:[7600,3000],rows:[new TableRow({children:[
     new TableCell({borders:{top:none,bottom:{style:BorderStyle.SINGLE,size:12,color:'1F3864'},left:none,right:none},width:{size:7600,type:WidthType.DXA},children:[P([t(`${d.n}  `,{size:44,bold:true,color:'C00000'}),t(d.title,{size:26,bold:true,color:'1F3864'})],{after:40}),P(d.sec||' ',{size:17,color:'7F7F7F',after:40})]}),
@@ -39,7 +39,7 @@ for(const d of data.filter(x=>x.n<=30)){
 }
 kids.push(P('백업 색인 — 질문이 오면 이 번호를 띄운다',{size:30,bold:true,color:'1F3864',after:160}));
 const brows=[new TableRow({tableHeader:true,children:['장','백업 번호','제목'].map((h,i)=>new TableCell({borders,width:{size:[700,1700,8200][i],type:WidthType.DXA},shading:{type:ShadingType.CLEAR,fill:'1F3864',color:'auto'},children:[P(h,{size:18,bold:true,color:'FFFFFF',after:0})]}))})];
-for(const d of data.filter(x=>x.n>30)) brows.push(new TableRow({children:[[d.n,700],[(d.label||'').replace(/^백업\s*/,''),1700],[d.title,8200]].map(([v,w])=>new TableCell({borders,width:{size:w,type:WidthType.DXA},margins:{top:20,bottom:20,left:60,right:60},children:[P(v,{size:17,after:0})]}))}));
+for(const d of data.filter(x=>!x.img)) brows.push(new TableRow({children:[[d.n,700],[(d.label||'').replace(/^백업\s*/,''),1700],[d.title,8200]].map(([v,w])=>new TableCell({borders,width:{size:w,type:WidthType.DXA},margins:{top:20,bottom:20,left:60,right:60},children:[P(v,{size:17,after:0})]}))}));
 kids.push(new Table({width:{size:10600,type:WidthType.DXA},columnWidths:[700,1700,8200],rows:brows}));
 kids.push(new Paragraph({children:[new PageBreak()]}));
 // 예상 질문 전문 — 장별·번호별 (첫 배정 장에 전문, 다른 장엔 참조)
