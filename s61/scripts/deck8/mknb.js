@@ -4,6 +4,7 @@ const {Document,Packer,Paragraph,TextRun,ImageRun,Table,TableRow,TableCell,Width
 const [,,dataPath,outPath,TITLE,SUB]=process.argv;
 const F='맑은 고딕';
 const data=JSON.parse(fs.readFileSync(dataPath,'utf8'));
+const last=data.filter(x=>x.n<=30).slice(-1)[0];const TOTAL=(s=>s>=60?`${Math.floor(s/60)}분${s%60?' '+s%60+'초':''}`:`${s}초`)(last.cum);
 const t=(s,o={})=>new TextRun({text:String(s),font:F,size:o.size||28,bold:o.bold,color:o.color,italics:o.italics});
 const P=(s,o={})=>new Paragraph({children:Array.isArray(s)?s:[t(s,o)],spacing:{after:o.after??120,line:o.line||300},alignment:o.align});
 const fmt=s=>s==null?'—':(s>=60?`${Math.floor(s/60)}분${s%60?' '+s%60+'초':''}`:`${s}초`);
@@ -21,7 +22,7 @@ kids.push(new Paragraph({children:[new PageBreak()]}));
 for(const d of data.filter(x=>x.n<=30)){
   kids.push(new Table({width:{size:10600,type:WidthType.DXA},columnWidths:[7600,3000],rows:[new TableRow({children:[
     new TableCell({borders:{top:{style:BorderStyle.NONE},bottom:{style:BorderStyle.SINGLE,size:12,color:'1F3864'},left:{style:BorderStyle.NONE},right:{style:BorderStyle.NONE}},width:{size:7600,type:WidthType.DXA},children:[P([t(`${d.n}  `,{size:44,bold:true,color:'C00000'}),t(d.title,{size:26,bold:true,color:'1F3864'})],{after:40}),P(d.sec||' ',{size:17,color:'7F7F7F',after:40})]}),
-    new TableCell({borders:{top:{style:BorderStyle.NONE},bottom:{style:BorderStyle.SINGLE,size:12,color:'1F3864'},left:{style:BorderStyle.NONE},right:{style:BorderStyle.NONE}},width:{size:3000,type:WidthType.DXA},children:[P(`목표 ${fmt(d.secs)}`,{size:20,bold:true,align:AlignmentType.RIGHT,after:0}),P(`누적 ${fmt(d.cum)} / 31분 20초`,{size:17,color:'7F7F7F',align:AlignmentType.RIGHT,after:40})]})]})]}));
+    new TableCell({borders:{top:{style:BorderStyle.NONE},bottom:{style:BorderStyle.SINGLE,size:12,color:'1F3864'},left:{style:BorderStyle.NONE},right:{style:BorderStyle.NONE}},width:{size:3000,type:WidthType.DXA},children:[P(`목표 ${fmt(d.secs)}`,{size:20,bold:true,align:AlignmentType.RIGHT,after:0}),P(`누적 ${fmt(d.cum)} / ${TOTAL}`,{size:17,color:'7F7F7F',align:AlignmentType.RIGHT,after:40})]})]})]}));
   const buf=fs.readFileSync(d.img); const w=330,h=Math.round(w*210/297);
   kids.push(new Paragraph({children:[new ImageRun({type:'png',data:buf,transformation:{width:w,height:h}})],spacing:{before:120,after:160}}));
   for(const s of d.sents) kids.push(P(s,{size:28,after:140,line:340}));
