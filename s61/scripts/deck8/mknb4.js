@@ -32,7 +32,7 @@ for(const d of data.filter(x=>x.img)){
   const buf=fs.readFileSync(d.img); const w=(c.thumb||260)-20,h=Math.round(w*210/297);
   kids.push(new Paragraph({children:[new ImageRun({type:'png',data:buf,transformation:{width:w,height:h}})],spacing:{before:80,after:100}}));
   const BOLD=/\d|ML|핵심|매핑|LMA|연계 지점|열여섯|쉰다섯|서른|스물|네 가지|넷/;
-  for(const s of d.sents) kids.push(P(s,{size:26,after:90,line:300,bold:(c.bold&&BOLD.test(s))?true:undefined}));
+  for(const s of d.sents) kids.push(P(s,{size:c.small?24:26,after:c.small?60:90,line:c.small?270:300,bold:(c.bold&&BOLD.test(s))?true:undefined}));
   if(c.short){kids.push(P(' ',{size:6,after:0}));kids.push(box1('짧게 — 시간이 밀리면 이것만 읽고 넘어간다',[P(c.short,{size:20,bold:true,after:20,line:260})],'FDECEC'));}
   for(const cu of d.cues) kids.push(P('〔'+cu+'〕',{size:16,color:'7F7F7F',after:30,line:240}));
   if(c.terms.length){kids.push(P(' ',{size:6,after:0}));kids.push(box1('용어 — 논문 부록 K 그대로',c.terms.map(x=>P([t(x.ko,{size:16,bold:true}),t(x.en?`(${x.en})`:'',{size:15,color:'595959'}),t(' — '+x.def,{size:15}),t('  · '+x.src,{size:13,color:'7F7F7F'})],{after:30,line:215})),'F2F4F8'));}
