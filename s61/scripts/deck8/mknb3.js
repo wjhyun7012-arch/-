@@ -25,6 +25,7 @@ kids.push(new Table({width:{size:10600,type:WidthType.DXA},columnWidths:[700,750
 kids.push(new Paragraph({children:[new PageBreak()]}));
 for(const d of data.filter(x=>x.img)){
   const c=CH.cheat[String(d.n)]||{terms:[],qs:[],ref:[]};
+  kids.push(new Paragraph({children:[t(' ',{size:2})],pageBreakBefore:true,spacing:{after:0,line:120}}));
   kids.push(new Table({width:{size:10600,type:WidthType.DXA},columnWidths:[7600,3000],rows:[new TableRow({children:[
     new TableCell({borders:{top:none,bottom:{style:BorderStyle.SINGLE,size:12,color:'1F3864'},left:none,right:none},width:{size:7600,type:WidthType.DXA},children:[P([t(`${d.n}  `,{size:44,bold:true,color:'C00000'}),t(d.title,{size:26,bold:true,color:'1F3864'})],{after:40}),P(d.sec||' ',{size:17,color:'7F7F7F',after:40})]}),
     new TableCell({borders:{top:none,bottom:{style:BorderStyle.SINGLE,size:12,color:'1F3864'},left:none,right:none},width:{size:3000,type:WidthType.DXA},children:[P(`목표 ${fmt(d.secs)}`,{size:20,bold:true,align:AlignmentType.RIGHT,after:0}),P(`누적 ${fmt(d.cum)} / ${TOTAL}`,{size:17,color:'7F7F7F',align:AlignmentType.RIGHT,after:40})]})]})]}));
@@ -35,8 +36,8 @@ for(const d of data.filter(x=>x.img)){
   if(c.terms.length){kids.push(P(' ',{size:6,after:0}));kids.push(box1('용어 — 논문 부록 K 그대로',c.terms.map(x=>P([t(x.ko,{size:16,bold:true}),t(x.en?`(${x.en})`:'',{size:15,color:'595959'}),t(' — '+x.def,{size:15}),t('  · '+x.src,{size:13,color:'7F7F7F'})],{after:30,line:215})),'F2F4F8'));}
   if(c.ref&&c.ref.length){kids.push(P(' ',{size:6,after:0}));kids.push(box2('참고 — 논문 어디에, 무엇이 (→ 뒤 쪽)',c.ref,'EEF6EE'));}
   if(c.qs.length){kids.push(P(' ',{size:6,after:0}));kids.push(box1('물으면 — 논문 위치 → 답 요지 → 전문·백업',c.qs.map(x=>P([t('Q. '+x.q+'  ',{size:16,bold:true}),t('→ 논문 '+x.loc+'. ',{size:15,bold:true,color:'1F3864'}),t(x.a,{size:15}),t('  · 전문 '+x.no+'번'+(x.ref?' · '+x.ref:''),{size:13,color:'7F7F7F'})],{after:40,line:215})),'FFF8E1'));}
-  kids.push(new Paragraph({children:[new PageBreak()]}));
 }
+kids.push(new Paragraph({children:[t(' ',{size:2})],pageBreakBefore:true,spacing:{after:0,line:120}}));
 kids.push(P('백업 색인 — 질문이 오면 이 번호를 띄운다',{size:30,bold:true,color:'1F3864',after:160}));
 const brows=[new TableRow({tableHeader:true,children:['장','백업 번호','제목'].map((h,i)=>new TableCell({borders,width:{size:[700,1700,8200][i],type:WidthType.DXA},shading:{type:ShadingType.CLEAR,fill:'1F3864',color:'auto'},children:[P(h,{size:18,bold:true,color:'FFFFFF',after:0})]}))})];
 for(const d of data.filter(x=>!x.img)) brows.push(new TableRow({children:[[d.n,700],[(d.label||'').replace(/^백업\s*/,''),1700],[d.title,8200]].map(([v,w])=>new TableCell({borders,width:{size:w,type:WidthType.DXA},margins:{top:20,bottom:20,left:60,right:60},children:[P(v,{size:17,after:0})]}))}));
